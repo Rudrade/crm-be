@@ -23,7 +23,14 @@ public class ClientService {
 
     @Transactional
     public Client persist(Client client) {
-        repository.persist(client);
+        if (client.id <= 0) {
+            client.persist();
+        } else {
+            Client entity = repository.findById(client.id);
+            entity.copy(client);
+            entity.persist();
+        }
+        
         return client;
     }
 
