@@ -24,4 +24,10 @@ public class Client extends PanacheEntityBase {
     @Column(name = "EMAIL", nullable = false, unique = true)
     public String email;
     
+
+    public void copy(Client client) {
+        firstName = client.firstName;
+        lastName = client.lastName;
+        email = client.email;
+    }
 }
