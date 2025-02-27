@@ -1,5 +1,7 @@
 package org.rudrade.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.rudrade.entity.Client;
@@ -39,6 +41,13 @@ public class ClientController {
     @Path("/{id}")
     public void deleteClient(@PathParam("id") long id) {
         service.delete(id);
+    }
+
+    @GET
+    @Path("/download")
+    @Produces(MediaType.TEXT_PLAIN)
+    public File exportClients() throws IOException {
+        return service.exportClients();
     }
 
 }

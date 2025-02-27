@@ -1,7 +1,13 @@
 package org.rudrade.service;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.rudrade.entity.Client;
 import org.rudrade.repository.ClientRepository;
 
@@ -37,6 +43,43 @@ public class ClientService {
     @Transactional
     public void delete(long id) {
         repository.deleteById(id);
+    }
+
+    public File exportClients() throws IOException {
+        
+        File file = new File(System.getProperty("java.io.tmpdir") + File.separator + "clients.csv");
+        try {
+            try (
+                FileWriter writer = new FileWriter(file);
+                CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT);
+            ) {
+                List<Client> lst = findAll();
+
+                printer.printRecord("id", "first_name", "last_name", "email");
+
+                for (Client client : lst) {
+                    printer.printRecord(
+                        client.id,
+                        client.firstName,
+                        client.lastName,
+                        client.email
+                    );
+                }
+            }
+
+        } catch (Exception e) {
+            if (file != null) {
+                try {
+                    Files.deleteIfExists(file.toPath());
+                } catch (IOException e2) {
+                    System.err.println("Erro ao apagar fx"+ e2);
+                }
+            }
+
+            throw e;
+        }
+
+        return file;
     }
 
 }
